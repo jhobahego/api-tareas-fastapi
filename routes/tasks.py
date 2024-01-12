@@ -19,7 +19,7 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     return crud_task.create_task(task=task, db=db)
 
 
-@router.put("/completar/{task_id}", response_model=TaskResponse)
+@router.patch("/completar/{task_id}", response_model=TaskResponse)
 def mark_task_as_completed(task_id: int, db: Session = Depends(get_db)):
     return crud_task.change_task_status(task_id=task_id, db=db)
 
