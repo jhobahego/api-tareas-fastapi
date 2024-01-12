@@ -45,7 +45,9 @@ def change_task_status(task_id: int, db: Session) -> TaskResponse:
     # mapear Task de modelo de SqlAlchemy a modelo de Pydantic
     task = TaskSchema(id=task.id, title=task.title, completed=task.completed)
 
-    return TaskResponse(task=task, message="Tarea marcada como completada", success=True)
+    response_message = "Tarea marcada como completada" if task.completed else "Tarea marcada como incompleta"
+
+    return TaskResponse(task=task, message=response_message, success=True)
 
 
 def delete_task(task_id: int, db: Session):
@@ -58,7 +60,7 @@ def delete_task(task_id: int, db: Session):
 
 
 def delete_all_tasks_completed(db: Session):
-    tasks = db.query(Task).filter(Task.completed is True).all()
+    tasks = db.query(Task).filter_by(completed=True).all()
     if not tasks:
         raise HTTPException(status_code=404, detail="No hay tareas completadas")
 
