@@ -33,6 +33,12 @@ def get_user_by_username(username: str, db: Session) -> Type[User]:
 
 
 def create_user(user: UserCreate, db: Session) -> Type[User]:
+    if len(user.username) < 3:
+        raise HTTPException(status_code=400, detail="El nombre de usuario debe tener al menos 3 caracteres")
+    
+    if len(user.password) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    
     try:
         with db.begin():
             db_user = db.query(User).filter_by(username=user.username).first()
