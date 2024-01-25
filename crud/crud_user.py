@@ -5,6 +5,7 @@ from schemas.User import UserCreate, UserUpdate
 from models.User import User
 from typing import Type
 
+from decouple import config
 from config.security import get_password_hash
 
 
@@ -44,8 +45,10 @@ def create_user(user: UserCreate, db: Session) -> Type[User]:
             db_user = db.query(User).filter_by(username=user.username).first()
             if db_user:
                 raise HTTPException(status_code=400, detail=f"Nombre de usuario: {user.username} ya existente")
-
+            
             created_user = User(username=user.username, hashed_password=get_password_hash(user.password))
+            if user.username == config("ADMIN_USERNAME"):
+                created_user.is_super_user = True
             db.add(created_user)
 
         db.refresh(created_user)
