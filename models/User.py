@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.orm import relationship
 
 from db import Base
 
@@ -11,3 +12,5 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     is_super_user = Column(Boolean, default=False)
+
+    tasks = relationship("Task", back_populates="user")
