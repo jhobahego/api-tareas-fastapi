@@ -13,7 +13,14 @@ def get_tasks(db: Session, skip: int, limit: int) -> list[Type[Task]]:
         raise HTTPException(status_code=400, detail=str(e))
 
 
-def create_task(task: TaskCreate, db: Session) -> TaskResponse:
+def get_user_tasks(db: Session, user_id) -> list[Type[Task]]:
+    try:
+        return db.query(Task).filter(Task.user_id == user_id).limit(5).all()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+def create_task(task: TaskCreate, user_id: int, db: Session) -> TaskResponse:
     title = task.title.strip()
     if len(title) < 4:
         raise HTTPException(status_code=400, detail="El título debe tener al menos 4 caracteres")
@@ -22,13 +29,13 @@ def create_task(task: TaskCreate, db: Session) -> TaskResponse:
     if db_task:
         raise HTTPException(status_code=400, detail="La tarea ya existe")
 
-    db_task = Task(title=task.title)
+    db_task = Task(title=task.title, user_id=user_id)
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
 
     # Mapeear Task de modelo de SqlAlchemy a modelo de Pydantic
-    task_schema = TaskSchema(id=db_task.id, title=db_task.title, completed=db_task.completed)
+    task_schema = TaskSchema(id=db_task.id, title=db_task.title, completed=db_task.completed, user_id=db_task.user_id)
 
     return TaskResponse(task=task_schema, message="Tarea creada correctamente", success=True)
 
