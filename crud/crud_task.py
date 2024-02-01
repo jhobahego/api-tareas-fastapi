@@ -25,6 +25,10 @@ def create_task(task: TaskCreate, user_id: int, db: Session) -> TaskResponse:
     if len(title) < 4:
         raise HTTPException(status_code=400, detail="El título debe tener al menos 4 caracteres")
     
+    user_tasks = db.query(Task).filter(Task.user_id == user_id).all()
+    if len(user_tasks) >= 5:
+        raise HTTPException(status_code=400, detail="Solo puedes guardar 5 tareas 😊")
+
     db_task = db.query(Task).filter(Task.title == title).first()
     if db_task:
         raise HTTPException(status_code=400, detail="La tarea ya existe")
