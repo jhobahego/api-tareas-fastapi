@@ -30,6 +30,16 @@ Una vez que el entorno virtual esté activo, puedes instalar las dependencias co
 pip install -r requirements.txt
 ```
 
+Configuración de variables de entorno
+
+```sh
+#.env
+DB_URL_CONNECTION=postgresql://usuario:contraseña@host:5432/nombre_de_base_de_datos
+FRONTEND_URL=http://localhost:8000
+SECRET_KEY=tu_clave_secreta
+ADMIN_USERNAME=nombre_de_usuario_admin
+```
+
 Ejecución del servidor
 Para ejecutar el servidor, puedes usar el siguiente comando:
 
